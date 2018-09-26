@@ -1,0 +1,23 @@
+- What is the relationship between p8, capture, and to?
+    to and capture are hard linked tp p8, in that they are equivalent to p8. to is equivalent to p8 -t <timeout> ..., and capture is equivalent to p8 -o <name.stdout -e <name>.stderr ...
+
+- running "ls" will display them individually. Is there a way to discover the
+  special relationship between them from the command line?
+   ls -i shows all the inode numbers of the files in the current directory. This way we can see that to, capture, and p8 have the same inode number and are hardlinked.
+
+- Explain how your implementation uses signals (sending them, handling them,
+   ...)
+    kill sends a signal to the process specified by the pid, and the singal I send is SIGTERM, which terminates the process.
+
+- What is the difference between an orphan processes and a zombie process?
+    A zombie process is created when the parent process does not use the system call wait/waitpid to read the exit status of a child after it dies. An orphan process is a child process that is reclaimed when the child's parent process terminates before the child.
+
+- How does your implementation deal with orphans and zombies?
+    In the parent process I call waitpid on the pid of the child process, which ensures that the parent will read the exit status of the child, preventing a zombie process. By waiting on the child process, we also ensure that the parent process does not die before the child process, preventing an orphan process.
+
+
+Sources
+
+Forking twice to timeout - Kevin Chen
+EndsWith method - https://stackoverflow.com/questions/744766/how-to-compare-ends-of-strings-in-c 
+ 

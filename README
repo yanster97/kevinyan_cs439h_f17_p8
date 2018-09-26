@@ -1,0 +1,126 @@
+Due date: 10/31/2017 @ 11:59pm
+
+Assignment:
+~~~~~~~~~~~
+
+- Implement a utility program that manages the execution of other programs
+- Answer the questions in REPORT.txt
+
+Program specification
+~~~~~~~~~~~~~~~~~~~~~
+
+p8 takes a number of command line argument. The general form for invoking p8
+is as follows:
+
+p8 [-t <timeout>] [-e <stderr file name>] [-o <stdout file name>]
+   [-f failure code] [-s]
+   [<command> [<args>]]
+
+There are also two aliases:
+
+to <timeout> ... => p8 -t <timeout> ...
+capture <name> ... => p8 -o <name>.stdout -e <name>.stderr ...
+
+The general behavior of p8 is to run the given command passing args to it.
+
+For example:
+
+    ./p8 ls    # runs the "ls" command
+    ./p8 ls -a # runs the "ls" command passing it the -a option
+
+The exit value of p8 should be:
+
+    - the exit value of the command if it exited normally
+
+    - the signal number that terminated the command if it was terminated by
+      a signal
+
+    - if no command was given, p8 exits with a status of 0
+
+Execution of the command can be controlled by options passed to p8 as follows:
+
+    -t <timeout> specifies a time out in seconds after which the command's
+                 execution should be terminated.
+
+       For example:
+
+        ./p8 -t 10 ls     # run "ls" and terminate its execution if it takes
+                          # more than 10 seconds
+
+        ./p8 -t 10 sleep 100   # will terminate sleep in 10 seconds
+
+      Terminating execution should be done by sending the command (e.g. sleep)
+      the SIGTERM signal
+
+    -o fileName  specifies a file name to which stdout of <command> will be
+                 directed
+
+      For example:
+
+        ./p8 -o output_from_ls.out ls -ld
+
+        ls's output will go to output_from_ls.out
+
+    -e fileName  specifies a file name to which stderr of <command> will be
+                 directed
+
+    -f <value>   causes p8 to exit immediately with <value> as its result. All
+                 options and arguments after "-f <value>" are ignored
+
+       For example:
+
+         ./p8 -f 20 ls  # p8 exits with status 20, ls doesn't run
+
+    -s           forces p8 to immediately dereference a null pointer, forcing
+                 a segmentation violation. Any options that follow will be
+                 ignored
+
+Examples:
+~~~~~~~~~
+
+./p8 -t 1000 sleep 10       # returns normally after 10 seconds
+./to 1 sleep 10             # same as ./p8 -t 1 sleep 10
+
+Files:
+~~~~~~
+
+- p8.c            -- do all your editing here
+- Makefile, *.ok  -- leave them alone
+- *.out           -- output from running tests
+
+To compile:
+~~~~~~~~~~~
+
+    make
+
+To run tests:
+~~~~~~~~~~~~~
+
+    make -s clean test
+
+To run one test:
+~~~~~~~~~~~~~~~~
+
+    make -s t0.result
+
+To make the output more noisy:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    make clean test
+
+To run by hand
+~~~~~~~~~~~~~~
+
+    make
+    ./p8 <options> <command> <args>
+
+To debug with gdb
+~~~~~~~~~~~~~~~~~
+
+Edit Makefile and replace -O3 with -O0
+
+make
+
+gdb ./p8
+gdb> run ...
+
